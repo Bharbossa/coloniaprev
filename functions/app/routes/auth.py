@@ -9,20 +9,20 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        if current_user.is_admin():
+        if current_user.has_panel_access():
             return redirect(url_for('admin.dashboard'))
         logout_user()
     form = LoginForm()
     if form.validate_on_submit():
         user = Usuario.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.senha, form.senha.data):
-            if user.is_admin():
+            if user.has_panel_access():
                 login_user(user)
                 next_page = request.args.get('next')
                 flash('Login efetuado com sucesso!', 'success')
                 return redirect(next_page) if next_page else redirect(url_for('admin.dashboard'))
             else:
-                flash('Acesso negado. Apenas o administrador geral tem acesso.', 'danger')
+                flash('Acesso negado. Apenas administradores têm acesso.', 'danger')
         else:
             flash('Login não efetuado. Verifique e-mail e senha.', 'danger')
     return render_template('login.html', title='Login Restrito', form=form)

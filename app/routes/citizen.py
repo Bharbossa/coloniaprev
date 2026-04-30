@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, send_from_directory, current_app, abort, redirect, url_for, flash
+from flask import Blueprint, render_template, send_file, current_app, abort, redirect, url_for, flash
 import os
+import io
 from flask_login import login_required, current_user
 from app.models import Documento, HistoricoDownload, db
 
@@ -23,9 +24,8 @@ def download_doc(doc_id):
     db.session.add(hist)
     db.session.commit()
     
-    filepath = os.path.join(current_app.root_path, 'static', 'uploads', doc.arquivo)
-    if os.path.exists(filepath):
-        return send_from_directory(os.path.join(current_app.root_path, 'static', 'uploads'), doc.arquivo, as_attachment=True)
+    if doc.dados_arquivo:
+        return send_file(io.BytesIO(doc.dados_arquivo), download_name=doc.arquivo, as_attachment=True)
     else:
-        flash('Arquivo não encontrado no servidor.', 'danger')
+        flash('Arquivo PDF ausente no servidor. Peça ao administrador para reenviar o arquivo.', 'danger')
         return redirect(url_for('citizen.dashboard'))

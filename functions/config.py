@@ -24,4 +24,11 @@ class Config:
             SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # IMPORTANTE PARA O FIREBASE HOSTING E RENDER
+    # O Firebase remove TODOS os cookies de sessão que não se chamam exatamente '__session'
+    SESSION_COOKIE_NAME = '__session'
+    
+    # Para o proxy reverso não dar problema com HTTPS e CSRF
+    WTF_CSRF_SSL_STRICT = False
 

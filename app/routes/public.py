@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, send_from_directory, current_app
+from flask import Blueprint, render_template, request, send_file, current_app, flash, redirect, url_for
 import os
+import io
 from app.models import Servidor, LeiDecreto
 
 bp = Blueprint('public', __name__)
@@ -31,7 +32,13 @@ def leis():
 @bp.route('/leis/download/<int:lei_id>')
 def download_lei(lei_id):
     lei = LeiDecreto.query.get_or_404(lei_id)
-    filepath = os.path.join(current_app.root_path, 'static', 'uploads', lei.arquivo)
-    if os.path.exists(filepath):
-        return send_from_directory(os.path.join(current_app.root_path, 'static', 'uploads'), lei.arquivo, as_attachment=True)
-    return "Arquivo não encontrado", 404
+    if lei.dados_arquivo:
+        return send_file(io.BytesIO(lei.dados_arquivo), download_name=lei.arquivo, as_attachment=True)
+    return "Arquivo PDF ausente no servidor. Peça ao administrador para reenviar o arquivo.", 404
+
+@bp.route('/leis/visualizar/<int:lei_id>')
+def visualizar_lei(lei_id):
+    lei = LeiDecreto.query.get_or_404(lei_id)
+    if lei.dados_arquivo:
+        return send_file(io.BytesIO(lei.dados_arquivo), download_name=lei.arquivo, mimetype='application/pdf', as_attachment=False)
+    return "Arquivo PDF ausente no servidor. Peça ao administrador para reenviar o arquivo.", 404

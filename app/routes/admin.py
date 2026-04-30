@@ -8,9 +8,9 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 @bp.before_request
 @login_required
 def require_admin():
-    if not current_user.is_admin():
+    if not current_user.has_panel_access():
         flash('Acesso Negado. Esta área é restrita a administradores.', 'danger')
-        return redirect(url_for('citizen.dashboard'))
+        return redirect(url_for('public.index'))
 
 @bp.route('/dashboard')
 def dashboard():
@@ -33,11 +33,17 @@ def dashboard():
 
 @bp.route('/usuarios')
 def usuarios():
+    if not current_user.is_admin():
+        flash('Acesso Negado. Apenas o Administrador Geral pode gerenciar usuários.', 'danger')
+        return redirect(url_for('admin.dashboard'))
     usuarios = Usuario.query.all()
     return render_template('admin_usuarios.html', usuarios=usuarios)
 
 @bp.route('/usuarios/novo', methods=['GET', 'POST'])
 def novo_usuario():
+    if not current_user.is_admin():
+        flash('Acesso Negado.', 'danger')
+        return redirect(url_for('admin.dashboard'))
     if request.method == 'POST':
         nome = request.form.get('nome')
         email = request.form.get('email')
@@ -57,6 +63,9 @@ def novo_usuario():
 
 @bp.route('/usuarios/editar/<int:user_id>', methods=['GET', 'POST'])
 def editar_usuario(user_id):
+    if not current_user.is_admin():
+        flash('Acesso Negado.', 'danger')
+        return redirect(url_for('admin.dashboard'))
     user = Usuario.query.get_or_404(user_id)
     if request.method == 'POST':
         user.nome = request.form.get('nome')
@@ -73,6 +82,9 @@ def editar_usuario(user_id):
 
 @bp.route('/usuarios/excluir/<int:user_id>')
 def excluir_usuario(user_id):
+    if not current_user.is_admin():
+        flash('Acesso Negado.', 'danger')
+        return redirect(url_for('admin.dashboard'))
     if user_id == current_user.id:
         flash('Você não pode excluir sua própria conta.', 'danger')
         return redirect(url_for('admin.usuarios'))
@@ -101,12 +113,9 @@ def novo_documento():
         
         if arquivo and arquivo.filename != '':
             filename = secure_filename(arquivo.filename)
-            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
-            os.makedirs(upload_folder, exist_ok=True)
-            filepath = os.path.join(upload_folder, filename)
-            arquivo.save(filepath)
+            file_data = arquivo.read()
             
-            novo = Documento(titulo=titulo, tipo=tipo, arquivo=filename)
+            novo = Documento(titulo=titulo, tipo=tipo, arquivo=filename, dados_arquivo=file_data)
             db.session.add(novo)
             db.session.commit()
             flash('Documento enviado com sucesso!', 'success')
@@ -120,7 +129,7 @@ def novo_documento():
 def excluir_documento(doc_id):
     doc = Documento.query.get_or_404(doc_id)
     
-    # Excluir o arquivo fixamente se existir
+    # Excluir o arquivo fixamente se existir no diretório antigo (legado)
     filepath = os.path.join(current_app.root_path, 'static', 'uploads', doc.arquivo)
     if os.path.exists(filepath):
         try:
@@ -191,12 +200,9 @@ def nova_lei():
         
         if arquivo and arquivo.filename != '':
             filename = secure_filename(arquivo.filename)
-            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
-            os.makedirs(upload_folder, exist_ok=True)
-            filepath = os.path.join(upload_folder, filename)
-            arquivo.save(filepath)
+            file_data = arquivo.read()
             
-            novo = LeiDecreto(titulo=titulo, tipo=tipo, arquivo=filename)
+            novo = LeiDecreto(titulo=titulo, tipo=tipo, arquivo=filename, dados_arquivo=file_data)
             db.session.add(novo)
             db.session.commit()
             flash('Lei ou Decreto publicado com sucesso!', 'success')
@@ -220,3 +226,35 @@ def excluir_lei(lei_id):
     db.session.commit()
     flash('Documento oficial excluído!', 'success')
     return redirect(url_for('admin.leis'))
+
+import base64
+
+@bp.route('/perfil', methods=['GET', 'POST'])
+def perfil():
+    if request.method == 'POST':
+        senha_atual = request.form.get('senha_atual')
+        nova_senha = request.form.get('nova_senha')
+        confirmar_senha = request.form.get('confirmar_senha')
+        foto = request.files.get('foto')
+
+        if nova_senha or senha_atual:
+            if not bcrypt.check_password_hash(current_user.senha, senha_atual):
+                flash('Senha atual incorreta.', 'danger')
+                return redirect(url_for('admin.perfil'))
+            if nova_senha != confirmar_senha:
+                flash('As novas senhas não conferem.', 'danger')
+                return redirect(url_for('admin.perfil'))
+            if nova_senha:
+                current_user.senha = bcrypt.generate_password_hash(nova_senha).decode('utf-8')
+
+        if foto and foto.filename != '':
+            image_bytes = foto.read()
+            encoded_string = base64.b64encode(image_bytes).decode('utf-8')
+            mime_type = foto.content_type
+            current_user.foto = f"data:{mime_type};base64,{encoded_string}"
+
+        db.session.commit()
+        flash('Perfil atualizado com sucesso!', 'success')
+        return redirect(url_for('admin.perfil'))
+
+    return render_template('admin_perfil.html')

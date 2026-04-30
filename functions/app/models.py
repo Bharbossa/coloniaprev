@@ -12,10 +12,17 @@ class Usuario(db.Model, UserMixin):
     nome = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
     senha = db.Column(db.String(60), nullable=False)
-    tipo = db.Column(db.String(20), nullable=False, default='cidadao') # admin / cidadao
+    tipo = db.Column(db.String(20), nullable=False, default='cidadao') # admin / subadmin / cidadao
+    foto = db.Column(db.Text, nullable=True) # Imagem em Base64
 
     def is_admin(self):
         return self.tipo == 'admin'
+        
+    def is_subadmin(self):
+        return self.tipo == 'subadmin'
+        
+    def has_panel_access(self):
+        return self.tipo in ['admin', 'subadmin']
 
 class Documento(db.Model):
     __tablename__ = 'documentos'
@@ -23,6 +30,7 @@ class Documento(db.Model):
     titulo = db.Column(db.String(200), nullable=False)
     tipo = db.Column(db.String(100), nullable=False) # Contracheque, Informe, etc.
     arquivo = db.Column(db.String(200), nullable=False) # filename or path
+    dados_arquivo = db.Column(db.LargeBinary, nullable=True) # Arquivo real no banco
     data_upload = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 class Servidor(db.Model):
@@ -40,6 +48,7 @@ class LeiDecreto(db.Model):
     titulo = db.Column(db.String(200), nullable=False)
     tipo = db.Column(db.String(100), nullable=False) # Lei, Decreto, Portaria
     arquivo = db.Column(db.String(200), nullable=False)
+    dados_arquivo = db.Column(db.LargeBinary, nullable=True) # Arquivo real no banco
     data_publicacao = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 class HistoricoDownload(db.Model):

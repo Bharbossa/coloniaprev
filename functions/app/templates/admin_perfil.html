@@ -1,0 +1,44 @@
+{% extends "admin_base.html" %}
+{% block title %}Meu Perfil{% endblock %}
+
+{% block content %}
+<div class="admin-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="margin: 0;">Meu Perfil</h3>
+    </div>
+    
+    <form method="POST" enctype="multipart/form-data" style="max-width: 500px;">
+        
+        <div style="margin-bottom: 25px; text-align: center;">
+            {% if current_user.foto %}
+                <img src="{{ current_user.foto }}" alt="Foto de Perfil" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 3px solid #0056b3;">
+            {% else %}
+                <div style="width: 150px; height: 150px; border-radius: 50%; background: #ccc; margin: 0 auto 10px auto; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #fff; border: 3px solid #0056b3;">
+                    <i class="bi bi-person"></i>
+                </div>
+            {% endif %}
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Alterar Foto</label>
+            <input type="file" name="foto" accept="image/*" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        </div>
+
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+        
+        <h4 style="margin-bottom: 15px;">Mudar Senha</h4>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Senha Atual</label>
+            <input type="password" name="senha_atual" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Nova Senha</label>
+            <input type="password" name="nova_senha" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Confirmar Nova Senha</label>
+            <input type="password" name="confirmar_senha" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        </div>
+        
+        <button type="submit" class="btn-add"><i class="bi bi-check-circle"></i> Salvar Alterações</button>
+    </form>
+</div>
+{% endblock %}

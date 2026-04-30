@@ -24,7 +24,8 @@
         <div style="margin-bottom: 20px;">
             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Perfil de Acesso</label>
             <select name="tipo" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-                <option value="admin" selected>Administrador Geral</option>
+                <option value="admin" {% if user and user.tipo == 'admin' %}selected{% endif %}>Administrador Geral</option>
+                <option value="subadmin" {% if user and user.tipo == 'subadmin' %}selected{% endif %}>Sub-Administrador (Apenas Conteúdo)</option>
             </select>
         </div>
         <button type="submit" class="btn-add"><i class="bi bi-check-circle"></i> Salvar Usuário</button>

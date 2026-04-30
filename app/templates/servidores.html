@@ -7,9 +7,53 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         body { font-family: 'Inter', sans-serif; background: #f4f6fa; }
-        .container-header { background: #fff; padding: 20px; text-align: center; border-bottom: 2px solid #0056b3; }
-        .container-header h1 { color: #0056b3; margin: 0; }
-        .content { max-width: 1000px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .container-header { 
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 20px; 
+            text-align: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            border-top: 1px solid rgba(255, 255, 255, 0.8);
+            border-left: 1px solid rgba(255, 255, 255, 0.5);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15), inset 0 0 15px rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        .container-header::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none; z-index: 0;
+        }
+        .container-header > * { position: relative; z-index: 1; }
+
+        .container-header h1 { color: #0056b3; margin: 0; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+        .content { 
+            position: relative;
+            z-index: 1;
+            max-width: 1000px; 
+            margin: 30px auto; 
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 30px; 
+            border-radius: 12px; 
+            border-top: 1px solid rgba(255, 255, 255, 0.8);
+            border-left: 1px solid rgba(255, 255, 255, 0.5);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15), inset 0 0 15px rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        .content::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 30%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none; z-index: 0;
+            border-radius: 12px 12px 0 0;
+        }
+        .content > * { position: relative; z-index: 1; }
         .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
         .search-bar input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; outline: none; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
