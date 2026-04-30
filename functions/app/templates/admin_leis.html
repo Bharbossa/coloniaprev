@@ -1,0 +1,38 @@
+{% extends "admin_base.html" %}
+{% block title %}Leis e Decretos{% endblock %}
+
+{% block content %}
+<div class="admin-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="margin: 0;">Leis e Decretos</h3>
+        <a href="{{ url_for('admin.nova_lei') }}" class="btn-add"><i class="bi bi-file-earmark-plus"></i> Publicar Documento Oficial</a>
+    </div>
+    
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Tipo</th>
+                <th>Arquivo</th>
+                <th>Data de Publicação</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lei in leis %}
+            <tr>
+                <td>{{ lei.titulo }}</td>
+                <td>{{ lei.tipo.capitalize() }}</td>
+                <td><a href="{{ url_for('static', filename='uploads/' ~ lei.arquivo) }}" target="_blank" style="color: #0056b3; text-decoration: none;"><i class="bi bi-file-pdf"></i> Visualizar</a></td>
+                <td>{{ lei.data_publicacao.strftime('%d/%m/%Y') }}</td>
+                <td>
+                    <a href="{{ url_for('admin.excluir_lei', lei_id=lei.id) }}" class="btn-action btn-delete" onclick="return confirm('Tem certeza que deseja apagar a publicação permanentemente?');"><i class="bi bi-trash"></i> Excluir</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" style="text-align: center; color: #777;">Nenhum documento oficial publicado.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

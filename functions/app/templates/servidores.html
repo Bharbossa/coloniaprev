@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Servidores - COLÔNIAPREV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f4f6fa; }
+        .container-header { background: #fff; padding: 20px; text-align: center; border-bottom: 2px solid #0056b3; }
+        .container-header h1 { color: #0056b3; margin: 0; }
+        .content { max-width: 1000px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-bar input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; outline: none; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #0056b3; color: #fff; cursor: pointer; }
+        th:hover { background: #004494; }
+        tr:hover { background: #f1f1f1; }
+        .btn-voltar { display: inline-block; margin-top: 20px; color: #0056b3; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container-header">
+        <h1>Servidores</h1>
+        <p>Quadro Geral de Servidores</p>
+    </div>
+    <div class="content">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Buscar em tempo real..." onkeyup="filterTable()">
+        </div>
+
+        <table id="servidoresTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Nome <i class="bi bi-arrow-down-up"></i></th>
+                    <th onclick="sortTable(1)">Cargo <i class="bi bi-arrow-down-up"></i></th>
+                    <th onclick="sortTable(2)">Situação <i class="bi bi-arrow-down-up"></i></th>
+                    <th onclick="sortTable(3)">Remuneração <i class="bi bi-arrow-down-up"></i></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in servidores %}
+                <tr>
+                    <td>{{ s.nome }}</td>
+                    <td>{{ s.cargo }}</td>
+                    <td>{{ s.situacao }}</td>
+                    <td>R$ {{ "%.2f"|format(s.salario) }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" style="text-align: center;">Nenhum servidor encontrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ url_for('public.index') }}" class="btn-voltar"><i class="bi bi-arrow-left"></i> Voltar ao Início</a>
+    </div>
+
+    <script>
+        function filterTable() {
+            let input = document.getElementById("searchInput");
+            let filter = input.value.toUpperCase();
+            let table = document.getElementById("servidoresTable");
+            let tr = table.getElementsByTagName("tr");
+            for (let i = 1; i < tr.length; i++) {
+                let txtValue = tr[i].textContent || tr[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+
+        function sortTable(n) {
+            let table = document.getElementById("servidoresTable");
+            let rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            switching = true;
+            dir = "asc"; 
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount ++; 
+                } else {
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

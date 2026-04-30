@@ -1,0 +1,10 @@
+venv/
+venv_new/
+venv_old/
+functions/venv/
+__pycache__/
+*.db
+.firebase/
+firebase-debug.log
+.env
+functions/.env

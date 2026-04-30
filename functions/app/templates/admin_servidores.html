@@ -1,0 +1,41 @@
+{% extends "admin_base.html" %}
+{% block title %}Servidores{% endblock %}
+
+{% block content %}
+<div class="admin-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="margin: 0;">Quadro de Servidores</h3>
+        <a href="{{ url_for('admin.novo_servidor') }}" class="btn-add"><i class="bi bi-person-plus"></i> Novo Servidor</a>
+    </div>
+    
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Cargo</th>
+                <th>Situação</th>
+                <th>Tipo</th>
+                <th>Salário / Remuneração</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in servidores %}
+            <tr>
+                <td>{{ s.nome }}</td>
+                <td>{{ s.cargo }}</td>
+                <td>{{ s.situacao.capitalize() }}</td>
+                <td>{{ s.tipo.capitalize() }}</td>
+                <td>R$ {{ "%.2f"|format(s.salario) }}</td>
+                <td>
+                    <a href="{{ url_for('admin.editar_servidor', serv_id=s.id) }}" class="btn-action btn-edit"><i class="bi bi-pencil-square"></i> Editar</a>
+                    <a href="{{ url_for('admin.excluir_servidor', serv_id=s.id) }}" class="btn-action btn-delete" onclick="return confirm('Tem certeza?');"><i class="bi bi-trash"></i> Excluir</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" style="text-align: center; color: #777;">Nenhum servidor cadastrado.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

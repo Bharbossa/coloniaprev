@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - COLÔNIAPREV</title>
+    <!--CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/responsividade.css') }}">
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+        }
+        .auth-card {
+            background: #f4f6fa;
+            border-top: 5px solid #0056b3; /* Azul */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .auth-card h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .auth-card .form-group {
+            margin-bottom: 20px;
+        }
+        .auth-card label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        .auth-card input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+        .auth-card input:focus {
+            border-color: #0056b3;
+        }
+        .auth-card .btn {
+            width: 100%;
+            background: #e63946; /* Vermelho/destaque */
+            color: #fff;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .auth-card .btn:hover {
+            background: #0056b3; /* Transição para azul */
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px; text-align: center;
+        }
+        .alert-danger { background: #ffebee; color: #c62828; }
+        .alert-success { background: #e8f5e9; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2>Login</h2>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.email.label }}
+                    {{ form.email(class="form-control", placeholder="Preencha seu e-mail") }}
+                </div>
+                <div class="form-group">
+                    {{ form.senha.label }}
+                    {{ form.senha(class="form-control", placeholder="Sua senha") }}
+                </div>
+                <div class="form-group">
+                    {{ form.submit(class="btn") }}
+                </div>
+            </form>
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="{{ url_for('public.index') }}" style="color: #0056b3; text-decoration: none;">Voltar ao Início</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

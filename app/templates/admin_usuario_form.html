@@ -1,0 +1,33 @@
+{% extends "admin_base.html" %}
+{% block title %}{{ 'Editar' if user else 'Novo' }} Usuário{% endblock %}
+
+{% block content %}
+<div class="admin-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="margin: 0;">{{ 'Editar' if user else 'Novo' }} Usuário</h3>
+        <a href="{{ url_for('admin.usuarios') }}" class="btn-action" style="color: #0056b3;"><i class="bi bi-arrow-left"></i> Voltar</a>
+    </div>
+    
+    <form method="POST" style="max-width: 500px;">
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Nome Completo</label>
+            <input type="text" name="nome" value="{{ user.nome if user else '' }}" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">E-mail</label>
+            <input type="email" name="email" value="{{ user.email if user else '' }}" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Senha {% if user %}<small>(deixe vazio para manter a atual)</small>{% endif %}</label>
+            <input type="password" name="senha" {% if not user %}required{% endif %} style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Perfil de Acesso</label>
+            <select name="tipo" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                <option value="admin" selected>Administrador Geral</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-add"><i class="bi bi-check-circle"></i> Salvar Usuário</button>
+    </form>
+</div>
+{% endblock %}

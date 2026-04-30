@@ -1,0 +1,35 @@
+{% extends "admin_base.html" %}
+{% block title %}Usuários{% endblock %}
+
+{% block content %}
+<div class="admin-card">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0;">Gerenciar Usuários</h3>
+        <a href="{{ url_for('admin.novo_usuario') }}" class="btn-add"><i class="bi bi-plus-circle"></i> Novo Usuário</a>
+    </div>
+    
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Perfil</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in usuarios %}
+            <tr>
+                <td>{{ user.nome }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.tipo.capitalize() }}</td>
+                <td>
+                    <a href="{{ url_for('admin.editar_usuario', user_id=user.id) }}" class="btn-action btn-edit"><i class="bi bi-pencil-square"></i> Editar</a>
+                    <a href="{{ url_for('admin.excluir_usuario', user_id=user.id) }}" class="btn-action btn-delete" onclick="return confirm('Tem certeza?');"><i class="bi bi-trash"></i> Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
